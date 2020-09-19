@@ -1,0 +1,38 @@
+#!/bin/bash
+
+api_key="lhetSxvhmfaa6gJd7eFsvqDp2hnQ5cJjFeH7jJ2V"
+
+if [[ $1 == "-e" ]]; then
+    echo $(curl -s https://api.nasa.gov/planetary/apod?api_key=$api_key | jq -r '.explanation')
+    exit 0
+fi
+
+# get the URL of the current Astronomy Picture of the Day (APOD)
+apod_url=$(curl -s https://api.nasa.gov/planetary/apod?api_key=$api_key | jq -r '.hdurl')
+
+# get just the image name from the URL
+filepath=$(basename "$apod_url")
+
+# check if apod is already downloaded
+if [ $(ls ~/Pictures/apods | grep "$filepath") == "$filepath" ]; then
+    echo "$filepath"
+    echo "apod already downloaded"
+    echo "setting $filepath"
+    feh --bg-fill "/home/$USER/Pictures/apods/$filepath"
+    exit 0
+fi
+
+# Now get the image and save it 
+echo "********Downloading image..."
+wget -nd -r -P ~/Pictures/apods/ -A jpeg,jpg,bmp,gif,png $apod_url
+    
+# delete temps
+rm -f ~/Pictures/apods/*tmp
+
+# get newest wallpaper in folder
+apod_name=($(ls ~/Pictures/apods -tA))
+
+# set wallpaper
+echo "********apod name is $apod_name"
+echo "********Setting wallpaper..."
+feh --bg-fill "/home/$USER/Pictures/apods/$apod_name"

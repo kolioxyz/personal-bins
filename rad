@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cvlc --open http://lb-hls.cdn.bg/2032/fls/HrBotev.stream/playlist.m3u8
+

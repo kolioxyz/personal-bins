@@ -1,6 +1,8 @@
 # personal-bins
-#### my personal gnu/linux binaries
+note, not actual binaries
 
+just bash scripts for now
+#### my personal gnu/linux binaries
 
 ### apod
 #### gets current nasa Astronomy Picture Of the Day and sets it as a wallpaper

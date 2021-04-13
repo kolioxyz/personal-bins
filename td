@@ -3,16 +3,22 @@
 #cp ~/.todolist2 .todolist
 file="/home/niko/.todolist"
 task=$2
+toggle=$(head -n 1 $file)
 
 function list {
 
+toggle=$(head -n 1 $file)
+if [ "$toggle" = "[true]" ]; then
+
 i=1
-while read line; do
 
-echo "$i. $line"
-i=$((i+1))
+sed 1d $file | while IFS=, read -r line
+do
+    echo "$i. $line"
+    i=$((i+1))
+done
 
-done < $file
+fi
 }
 
 function deleteLine {
@@ -41,22 +47,33 @@ case "$op" in
 "d")
     opts=${opts:1}
     op=${opts:0:1}
-    deleteLine $op
+    num=$(($op + 1))
+    deleteLine $num
+    opts=${opts:1}
     ;;
 "a")
     opts=${opts:1}
     echo $task >> $file
     ;;
-"s")
-    #switch op1 op2
+"t")
+    opts=${opts:1}
+    if [ "$toggle" == "[true]" ]; then
+        sed -i 1d $file
+        sed -i "1i[false]" $file
+        toggle="[true]"
+    elif [ "$toggle" == "[false]" ]; then
+        sed -i 1d $file
+        sed -i "1i[true]" $file
+        toggle="[true]"
+    fi
     ;;
 *)
     #do_nothing()
     ;;
 esac
 
-opts=${opts:1}
-
 done
-
+if [ -z $opts ]; then
 list
+fi
+
